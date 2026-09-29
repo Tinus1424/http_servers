@@ -1,4 +1,5 @@
 import type { Request, Response } from "express";
+import { BadRequestError } from "./error_middleware.js";
 
 import { respondWithJSON, respondWithError } from "./json.js";
 
@@ -11,11 +12,20 @@ export async function handlerChirpsValidate(req: Request, res: Response) {
 
   const maxChirpLength = 140;
   if (params.body.length > maxChirpLength) {
-    respondWithError(res, 400, "Chirp is too long");
-    return;
+    throw new BadRequestError("Chirp is too long. Max length is 140");
   }
 
+  const stringArray = params.body.split(" ");
+  const buffer: Array<string> = []
+  for (const str of stringArray) {
+    if (["kerfuffle", "sharbert", "fornax"].includes(str.toLowerCase()) ) {
+      buffer.push("****");
+    } else {
+      buffer.push(str);
+    }
+  };
+
   respondWithJSON(res, 200, {
-    valid: true,
+    "cleanedBody": buffer.join(" "),
   });
 }
