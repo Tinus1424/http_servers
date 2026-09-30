@@ -2,9 +2,12 @@ import { MigrationConfig } from "drizzle-orm/migrator";
 
 process.loadEnvFile();
 
+
+
 type APIConfig = {
     fileserverHits: number;
     port: number;
+    platform: string;
 };
 
 type DBConfig = {
@@ -17,13 +20,20 @@ type Config = {
     db: DBConfig;
 }
 
-export const config: Config {
-    api: {
-        fileserverHits = 0,
-        port = envOrThrow("PORT"),
+const migrationConfig: MigrationConfig = {
+    migrationsFolder: "./src/db/migrations",
+};
+
+
+export const config: Config = {
+    api:  {
+        fileserverHits: 0,
+        port: Number(envOrThrow("PORT")),
+        platform: envOrThrow("PLATFORM"),
     },
     db: {
-        url = envOrThrow("DB_URL") // RIGHT NOW I'M HERE THINKING OF HOW TO LOAD THE MIGRATION SETTINGS, SEE BOOTS CHAT
+        url: envOrThrow("DB_URL"),
+        migrationConfig: migrationConfig,
     }
 }; 
 
